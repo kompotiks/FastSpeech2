@@ -2,7 +2,7 @@ import argparse
 
 import yaml
 
-from preprocessor import ljspeech, aishell3, libritts
+from preprocessor import ljspeech, aishell3, libritts, ailabs_rn
 
 
 def main(config):
@@ -12,6 +12,10 @@ def main(config):
         aishell3.prepare_align(config)
     if "LibriTTS" in config["dataset"]:
         libritts.prepare_align(config)
+    if "RUSLAN" in config["dataset"]:
+        ljspeech.prepare_align(config)
+    if "M-AILABS+RN" in config["dataset"]:
+        ailabs_rn.prepare_align(config)
 
 
 if __name__ == "__main__":

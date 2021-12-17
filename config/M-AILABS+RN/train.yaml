@@ -1,7 +1,7 @@
 path:
-  ckpt_path: "./output/ckpt/RUSLAN"
-  log_path: "./output/log/RUSLAN"
-  result_path: "./output/result/RUSLAN"
+  ckpt_path: "./output/ckpt/M-AILABS+RN"
+  log_path: "./output/log/M-AILABS+RN"
+  result_path: "./output/result/M-AILABS+RN"
 optimizer:
   batch_size: 48
   betas: [0.9, 0.98]
@@ -10,10 +10,10 @@ optimizer:
   grad_clip_thresh: 1.0
   grad_acc_step: 1
   warm_up_step: 4000
-  anneal_steps: [10000, 15000, 20000]
+  anneal_steps: []
   anneal_rate: 0.3
 step:
-  total_step: 50000
+  total_step: 70000
   log_step: 100
   synth_step: 400
   val_step: 400

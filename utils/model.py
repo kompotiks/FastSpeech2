@@ -13,11 +13,12 @@ def get_model(args, configs, device, train=False):
 
     model = FastSpeech2(preprocess_config, model_config).to(device)
     if args.restore_step:
-        ckpt_path = os.path.join(
-            train_config["path"]["ckpt_path"],
-            "{}.pth.tar".format(args.restore_step),
-        )
-        ckpt = torch.load(ckpt_path)
+        # ckpt_path = os.path.join(
+        #     train_config["path"]["ckpt_path"],
+        #     "{}.pth.tar".format(args.restore_step),
+        # )
+        ckpt_path = '55000.pth.tar'
+        ckpt = torch.load(ckpt_path, map_location=device)
         model.load_state_dict(ckpt["model"])
 
     if train:
@@ -59,10 +60,9 @@ def get_vocoder(config, device):
             config = json.load(f)
         config = hifigan.AttrDict(config)
         vocoder = hifigan.Generator(config)
-        if speaker == "LJSpeech":
-            ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar")
-        elif speaker == "universal":
-            ckpt = torch.load("hifigan/generator_universal.pth.tar")
+        # if speaker == "LJSpeech":
+        # ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar", map_location=device)
+        ckpt = torch.load("hifigan/generator_universal.pth.tar", map_location=device)
         vocoder.load_state_dict(ckpt["generator"])
         vocoder.eval()
         vocoder.remove_weight_norm()

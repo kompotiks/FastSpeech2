@@ -7,6 +7,7 @@ import yaml
 import numpy as np
 from torch.utils.data import DataLoader
 from g2p_en import G2p
+from G2P.test import G2P
 from pypinyin import pinyin, Style
 
 from utils.model import get_model, get_vocoder
@@ -41,6 +42,37 @@ def preprocess_english(text, preprocess_config):
             phones += lexicon[w.lower()]
         else:
             phones += list(filter(lambda p: p != " ", g2p(w)))
+    phones = "{" + "}{".join(phones) + "}"
+    phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
+    phones = phones.replace("}{", " ")
+
+    print("Raw Text Sequence: {}".format(text))
+    print("Phoneme Sequence: {}".format(phones))
+    sequence = np.array(
+        text_to_sequence(
+            phones, preprocess_config["preprocessing"]["text"]["text_cleaners"]
+        )
+    )
+
+    return np.array(sequence)
+
+
+def preprocess_russian(text, preprocess_config):
+    text = text.rstrip(punctuation)
+    lexicon = read_lexicon(preprocess_config["path"]["lexicon_path"])
+
+    g2p = G2P()
+    phones = []
+    text = re.sub('[\da-zA-Z.,:;"\']', '', text)
+    text = text.lower()
+    words = re.split(r"([,;. \-\?\!\s+])", text)
+    for w in words:
+        if ' ' == w:
+            continue
+        if w.lower() in lexicon:
+            phones += lexicon[w.lower()]
+        else:
+            phones += list(filter(lambda p: p != " ", g2p(w, False)))
     phones = "{" + "}{".join(phones) + "}"
     phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
     phones = phones.replace("}{", " ")
@@ -206,6 +238,8 @@ if __name__ == "__main__":
             texts = np.array([preprocess_english(args.text, preprocess_config)])
         elif preprocess_config["preprocessing"]["text"]["language"] == "zh":
             texts = np.array([preprocess_mandarin(args.text, preprocess_config)])
+        elif preprocess_config["preprocessing"]["text"]["language"] == "ru":
+            texts = np.array([preprocess_russian(args.text, preprocess_config)])
         text_lens = np.array([len(texts[0])])
         batchs = [(ids, raw_texts, speakers, texts, text_lens, max(text_lens))]
 
