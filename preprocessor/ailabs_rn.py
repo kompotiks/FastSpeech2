@@ -20,7 +20,7 @@ def prepare_align(config):
             base_name = parts[0]
             speaker = parts[1]
             text = parts[2]
-            text = _clean_text(text, cleaners)
+            # text = _clean_text(text, cleaners)
 
             wav_path = os.path.join(in_dir, "wavs", "{}.wav".format(base_name))
             if os.path.exists(wav_path):
